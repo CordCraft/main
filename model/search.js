@@ -5,7 +5,6 @@
  */
 
 var mongoose = require('mongoose');
-var mongoosastic = require('mongoosastic');
 
 
 
@@ -14,7 +13,6 @@ var searchSchema = mongoose.Schema({
     query:Object
 });
 
-searchSchema.plugin(mongoosastic);
 var FunctionCreatePlugin = require('../bin/plugin/fn-create-plugin').NoAuth;
 searchSchema.plugin(FunctionCreatePlugin);
 

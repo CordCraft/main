@@ -6,7 +6,7 @@
 var mongoose = require('mongoose');
 
 mongoose.Promise = require('bluebird');
-var ElasticPlugin = require("mongoosastic");
+//var ElasticPlugin = require("mongoosastic");
 var PiperPlugin = require("./plugin/piper-plugin");
 var FakerPlugin = require('mongoose-easy-types').Plugin;
 var PaginationPlugin = require('mongoose-paginate');
@@ -27,8 +27,7 @@ var FindByUserIdPlugin = require('./plugin/fn-find-by-user-id-plugin');
 //mongoose.plugin(FunctionCreatePlugin);
 mongoose.plugin(FakerPlugin);
 mongoose.plugin(PiperPlugin);
-mongoose.plugin(ElasticPlugin);
-mongoose.plugin(PaginationPlugin);
+//mongoose.plugin(ElasticPlugin);
 mongoose.plugin(FindByUserIdPlugin);
 
 //mongoose.plugin(LogPlugin);

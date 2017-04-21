@@ -20,7 +20,6 @@
         "nodemailer":"",
         "mongoose-easy-types":"",
         "mongoose-paginater":"",
-        "mongoosastic":"",
         "faker":"",
         "jade": "~1.11.0",
         "less-middleware": "1.0.x",
