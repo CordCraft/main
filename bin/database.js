@@ -9,7 +9,7 @@ mongoose.Promise = require('bluebird');
 //var ElasticPlugin = require("mongoosastic");
 var PiperPlugin = require("./plugin/piper-plugin");
 var FakerPlugin = require('mongoose-easy-types').Plugin;
-var PaginationPlugin = require('mongoose-paginate');
+//var PaginationPlugin = require('mongoose-paginate');
 var FindByUserIdPlugin = require('./plugin/fn-find-by-user-id-plugin');
 //var FunctionCreatePlugin = require('./plugin/fn-create-plugin');
 
