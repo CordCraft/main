@@ -21,7 +21,11 @@ const app = express();
 const tv = new TvController();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'), { extensions: ['html'] }));
+// Works both from source (server.js next to public/) and from the single-file
+// bundle in dist/ (one level down).
+const fs = require('fs');
+const PUBLIC_DIR = [path.join(__dirname, 'public'), path.join(__dirname, '..', 'public')].find((d) => fs.existsSync(d));
+app.use(express.static(PUBLIC_DIR, { extensions: ['html'] }));
 
 // Small helper so route handlers can throw and still return clean JSON.
 const wrap = (fn) => (req, res) => {

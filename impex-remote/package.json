@@ -5,12 +5,16 @@
   "description": "Browser / iPhone remote control for Impex Android TV / Google TV sets",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "node build.js"
   },
   "engines": {
     "node": ">=14"
   },
   "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  },
   "dependencies": {
     "androidtv-remote": "^1.0.10",
     "bonjour-service": "^1.4.4",

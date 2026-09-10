@@ -17,6 +17,17 @@ exit, record, play/pause, stop, subtitles, audio track and teletext.
 - [Node.js](https://nodejs.org) 14 or newer on that computer (18+ recommended).
 - The TV switched on, at least the first time, so it can show the pairing code.
 
+## No-install option (iPhone with iSH, Raspberry Pi, anything where npm is flaky)
+
+`dist/remote.js` is a prebuilt single file with every dependency inside. It
+needs only Node 14 or newer, no `npm install`:
+
+```bash
+node dist/remote.js
+```
+
+Rebuild it after changing the code with `npm run build`.
+
 ## Setup (about two minutes)
 
 On a Mac, double-click `start.command`. On Windows, double-click `start.bat`.
