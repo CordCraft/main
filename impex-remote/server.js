@@ -52,20 +52,70 @@ app.get('/api/events', (req, res) => {
   });
 });
 
-// Find Android TV / Google TV sets on the network via mDNS.
-app.get('/api/discover', (req, res) => {
-  const bonjour = new Bonjour();
-  const found = new Map();
-  const browser = bonjour.find({ type: 'androidtvremote2' }, (service) => {
-    const ip = (service.addresses || []).find((a) => /^\d+\.\d+\.\d+\.\d+$/.test(a)) || service.host;
-    if (ip) found.set(ip, { name: service.name, host: ip, port: service.port });
+// Find Android TV / Google TV sets on the network. mDNS first; if that finds
+// nothing (or ?subnet=192.168.1 is given) probe every address in the /24 range
+// for the remote port, which works even where multicast is blocked.
+const net = require('net');
+
+function probe(host, port, timeoutMs) {
+  return new Promise((resolve) => {
+    const sock = net.connect({ host, port });
+    const done = (ok) => { sock.destroy(); resolve(ok); };
+    sock.setTimeout(timeoutMs, () => done(false));
+    sock.once('connect', () => done(true));
+    sock.once('error', () => done(false));
   });
-  setTimeout(() => {
-    browser.stop();
-    bonjour.destroy();
-    res.json({ ok: true, devices: Array.from(found.values()) });
-  }, 2500);
-});
+}
+
+async function scanSubnet(base) {
+  const hits = [];
+  const hosts = [];
+  for (let i = 1; i < 255; i++) hosts.push(`${base}.${i}`);
+  const workers = Array.from({ length: 64 }, async () => {
+    while (hosts.length) {
+      const host = hosts.shift();
+      if (await probe(host, 6466, 700)) hits.push({ name: 'Android TV', host, port: 6466 });
+    }
+  });
+  await Promise.all(workers);
+  return hits.sort((a, b) => Number(a.host.split('.')[3]) - Number(b.host.split('.')[3]));
+}
+
+function discoverMdns() {
+  return new Promise((resolve) => {
+    let bonjour;
+    try {
+      bonjour = new Bonjour();
+    } catch (err) {
+      return resolve([]);
+    }
+    const found = new Map();
+    const browser = bonjour.find({ type: 'androidtvremote2' }, (service) => {
+      const ip = (service.addresses || []).find((a) => /^\d+\.\d+\.\d+\.\d+$/.test(a)) || service.host;
+      if (ip) found.set(ip, { name: service.name, host: ip, port: service.port });
+    });
+    setTimeout(() => {
+      try { browser.stop(); bonjour.destroy(); } catch (err) { /* ignore */ }
+      resolve(Array.from(found.values()));
+    }, 2500);
+  });
+}
+
+app.get('/api/discover', wrap(async (req, res) => {
+  let devices = [];
+  const explicit = String(req.query.subnet || '').trim().replace(/\.$/, '');
+  if (explicit) {
+    if (!/^\d+\.\d+\.\d+$/.test(explicit)) throw new Error('Subnet should look like 192.168.1');
+    devices = await scanSubnet(explicit);
+  } else {
+    devices = await discoverMdns();
+    if (!devices.length) {
+      const bases = new Set(localAddresses().map((ip) => ip.split('.').slice(0, 3).join('.')));
+      for (const base of bases) devices.push(...await scanSubnet(base));
+    }
+  }
+  res.json({ ok: true, devices });
+}));
 
 app.post('/api/connect', wrap(async (req, res) => {
   const state = await tv.connect(req.body.host);

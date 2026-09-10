@@ -205,9 +205,12 @@
     btn.textContent = 'Scanning…';
     deviceList.innerHTML = '';
     try {
-      const { devices } = await api('discover');
+      // If the box holds a partial address like 192.168.1, scan that range.
+      const typed = hostInput.value.trim();
+      const subnet = /^\d+\.\d+\.\d+\.?$/.test(typed) ? typed : '';
+      const { devices } = await api('discover' + (subnet ? '?subnet=' + encodeURIComponent(subnet) : ''));
       if (!devices.length) {
-        deviceList.innerHTML = '<li>No TVs found. Make sure the TV is on, then type its IP address.</li>';
+        deviceList.innerHTML = '<li>No TVs found. Make sure the TV is on. You can also type the first three parts of your iPhone\'s Wi-Fi address (for example 192.168.1) and tap Scan again.</li>';
       }
       devices.forEach((d) => {
         const li = document.createElement('li');
