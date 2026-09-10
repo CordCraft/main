@@ -1,0 +1,11 @@
+{
+  "name": "Impex TV Remote",
+  "short_name": "Impex Remote",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1a33",
+  "theme_color": "#0f1a33",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

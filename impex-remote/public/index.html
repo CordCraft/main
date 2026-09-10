@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Impex Remote</title>
+  <meta name="theme-color" content="#0f1a33">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Impex Remote">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="remote">
+    <header class="topbar">
+      <button class="status" id="statusBtn" type="button" aria-label="Connection settings">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Not connected</span>
+      </button>
+      <span class="nowplaying" id="nowPlaying"></span>
+    </header>
+
+    <!-- Power row -->
+    <section class="row three">
+      <button class="key round power" data-key="POWER" aria-label="Power">&#x23FB;</button>
+      <span class="led" id="led"></span>
+      <button class="key round" data-key="MUTE" aria-label="Mute">&#x1F507;</button>
+    </section>
+
+    <!-- Number pad -->
+    <section class="grid numpad">
+      <button class="key" data-key="1">1</button>
+      <button class="key" data-key="2">2</button>
+      <button class="key" data-key="3">3</button>
+      <button class="key" data-key="4">4</button>
+      <button class="key" data-key="5">5</button>
+      <button class="key" data-key="6">6</button>
+      <button class="key" data-key="7">7</button>
+      <button class="key" data-key="8">8</button>
+      <button class="key" data-key="9">9</button>
+      <button class="key" data-key="ALL_APPS" aria-label="All apps">&#x2637;</button>
+      <button class="key" data-key="0">0</button>
+      <button class="key small" data-key="INFO">INFO</button>
+    </section>
+
+    <!-- Volume / input / channel -->
+    <section class="grid rockers">
+      <div class="rocker">
+        <button class="key" data-key="VOLUME_UP" data-repeat aria-label="Volume up">+</button>
+        <span class="label">VOL</span>
+        <button class="key" data-key="VOLUME_DOWN" data-repeat aria-label="Volume down">&minus;</button>
+      </div>
+      <div class="middle">
+        <button class="key round" data-key="TV_INPUT" aria-label="Input source">&#x2386;</button>
+        <button class="key round mic" data-key="ASSIST" aria-label="Google Assistant">&#x1F3A4;</button>
+      </div>
+      <div class="rocker">
+        <button class="key" data-key="CHANNEL_UP" data-repeat aria-label="Channel up">+</button>
+        <span class="label">CH</span>
+        <button class="key" data-key="CHANNEL_DOWN" data-repeat aria-label="Channel down">&minus;</button>
+      </div>
+    </section>
+
+    <section class="row three">
+      <button class="key round" data-key="PROFILE_SWITCH" aria-label="Switch profile">&#x1F464;</button>
+      <span></span>
+      <button class="key round" data-key="SETTINGS" aria-label="Settings">&#x2699;</button>
+    </section>
+
+    <!-- D-pad -->
+    <section class="dpad">
+      <button class="key dir up" data-key="DPAD_UP" data-repeat aria-label="Up">&#x2303;</button>
+      <button class="key dir left" data-key="DPAD_LEFT" data-repeat aria-label="Left">&#x2039;</button>
+      <button class="key ok" data-key="DPAD_CENTER" aria-label="OK">OK</button>
+      <button class="key dir right" data-key="DPAD_RIGHT" data-repeat aria-label="Right">&#x203A;</button>
+      <button class="key dir down" data-key="DPAD_DOWN" data-repeat aria-label="Down">&#x2304;</button>
+    </section>
+
+    <section class="row three">
+      <button class="key round" data-key="BACK" aria-label="Back">&#x2190;</button>
+      <button class="key round home" data-key="HOME" aria-label="Home">&#x2302;</button>
+      <button class="key round" data-key="TV" aria-label="Live TV">&#x1F4FA;</button>
+    </section>
+
+    <!-- App shortcuts -->
+    <section class="grid apps">
+      <button class="key app netflix" data-app="https://www.netflix.com/title">NETFLIX</button>
+      <button class="key app youtube" data-app="https://www.youtube.com">&#x25B6; YouTube</button>
+      <button class="key app prime" data-app="https://app.primevideo.com">prime video</button>
+      <button class="key app usb" data-key="TV_INPUT">USB</button>
+    </section>
+
+    <!-- Colour keys -->
+    <section class="grid colours">
+      <button class="key colour red" data-key="PROG_RED" aria-label="Red"></button>
+      <button class="key colour green" data-key="PROG_GREEN" aria-label="Green"></button>
+      <button class="key colour yellow" data-key="PROG_YELLOW" aria-label="Yellow"></button>
+      <button class="key colour blue" data-key="PROG_BLUE" aria-label="Blue"></button>
+    </section>
+
+    <section class="grid four">
+      <button class="key small" data-key="ESCAPE">EXIT</button>
+      <button class="key" data-key="MEDIA_RECORD" aria-label="Record"><span class="rec"></span></button>
+      <button class="key" data-key="MEDIA_PLAY_PAUSE" aria-label="Play or pause">&#x23EF;</button>
+      <button class="key" data-key="MEDIA_STOP" aria-label="Stop">&#x23F9;</button>
+    </section>
+
+    <section class="grid three-wide">
+      <button class="key small" data-key="CAPTIONS">SUBT</button>
+      <button class="key small" data-key="MEDIA_AUDIO_TRACK">AUDIO</button>
+      <button class="key small" data-key="TV_TELETEXT">TXT</button>
+    </section>
+
+    <footer class="brand">impe<span>X</span></footer>
+  </main>
+
+  <!-- Connection / pairing sheet -->
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+  <section class="sheet" id="sheet" hidden aria-label="Connect to TV">
+    <h2>Connect to your TV</h2>
+    <p class="hint">The TV and this phone must be on the same Wi-Fi. Find the TV's IP address under
+      Settings &rarr; Network &amp; Internet, or tap Scan.</p>
+
+    <div class="field">
+      <input id="hostInput" type="text" inputmode="decimal" placeholder="TV IP address, e.g. 192.168.1.50" autocomplete="off">
+      <button class="btn" id="scanBtn" type="button">Scan</button>
+    </div>
+    <ul class="devices" id="deviceList"></ul>
+
+    <button class="btn primary" id="connectBtn" type="button">Connect</button>
+
+    <div id="pairBox" hidden>
+      <p class="hint">Your TV is now showing a 6 character code. Type it here.</p>
+      <div class="field">
+        <input id="codeInput" type="text" maxlength="6" placeholder="Code on TV" autocapitalize="characters" autocomplete="one-time-code">
+        <button class="btn primary" id="pairBtn" type="button">Pair</button>
+      </div>
+    </div>
+
+    <p class="error" id="errorText"></p>
+
+    <div class="sheet-actions">
+      <button class="btn ghost" id="forgetBtn" type="button">Forget TV</button>
+      <button class="btn ghost" id="closeSheet" type="button">Close</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>
