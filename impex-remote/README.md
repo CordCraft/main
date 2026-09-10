@@ -14,7 +14,7 @@ exit, record, play/pause, stop, subtitles, audio track and teletext.
 
 - A computer (Mac, Windows, Linux) or a Raspberry Pi on the **same Wi-Fi as the TV**.
   It runs a tiny server that talks to the TV. Your phone talks to that server.
-- [Node.js](https://nodejs.org) 18 or newer on that computer.
+- [Node.js](https://nodejs.org) 14 or newer on that computer (18+ recommended).
 - The TV switched on, at least the first time, so it can show the pairing code.
 
 ## Setup (about two minutes)

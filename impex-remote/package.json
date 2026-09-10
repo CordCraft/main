@@ -8,12 +8,12 @@
     "start": "node server.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=14"
   },
   "license": "MIT",
   "dependencies": {
     "androidtv-remote": "^1.0.10",
     "bonjour-service": "^1.4.4",
-    "express": "^5.2.1"
+    "express": "^4.21.2"
   }
 }
