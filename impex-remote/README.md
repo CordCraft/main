@@ -19,6 +19,9 @@ exit, record, play/pause, stop, subtitles, audio track and teletext.
 
 ## Setup (about two minutes)
 
+On a Mac, double-click `start.command`. On Windows, double-click `start.bat`.
+Or from a terminal:
+
 ```bash
 cd impex-remote
 npm install
