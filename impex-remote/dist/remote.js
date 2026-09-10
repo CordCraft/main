@@ -21874,8 +21874,8 @@ var require_application = __commonJS({
       tryRender(view, renderOptions, done);
     };
     app2.listen = function listen() {
-      var server = http.createServer(this);
-      return server.listen.apply(server, arguments);
+      var server2 = http.createServer(this);
+      return server2.listen.apply(server2, arguments);
     };
     function logerror(err) {
       if (this.get("env") !== "test") console.error(err.stack || err.toString());
@@ -23883,9 +23883,9 @@ var require_registry = __commonJS({
     var noop = function() {
     };
     var Registry = class {
-      constructor(server) {
+      constructor(server2) {
         this.services = [];
-        this.server = server;
+        this.server = server2;
       }
       publish(config) {
         const configProbe = config.probe !== false;
@@ -23963,14 +23963,14 @@ var require_registry = __commonJS({
         mdns.on("response", onresponse);
         setTimeout(send, Math.random() * 250);
       }
-      announce(server, service) {
+      announce(server2, service) {
         var delay = 1e3;
         var packet = service.records();
-        server.register(packet);
+        server2.register(packet);
         const broadcast = () => {
           if (!service.activated || service.destroyed)
             return;
-          server.mdns.respond(packet, function() {
+          server2.mdns.respond(packet, function() {
             if (!service.published) {
               service.activated = true;
               service.published = true;
@@ -23984,7 +23984,7 @@ var require_registry = __commonJS({
         };
         broadcast();
       }
-      teardown(server, services, callback) {
+      teardown(server2, services, callback) {
         if (!Array.isArray(services))
           services = [services];
         services = services.filter((service) => service.activated);
@@ -23998,8 +23998,8 @@ var require_registry = __commonJS({
         });
         if (records.length === 0)
           return callback && process.nextTick(callback);
-        server.unregister(records);
-        server.mdns.respond(records, function() {
+        server2.unregister(records);
+        server2.mdns.respond(records, function() {
           services.forEach(function(service) {
             service.published = false;
           });
@@ -79827,24 +79827,36 @@ async function scanSubnet(base) {
 function discoverMdns() {
   return new Promise((resolve) => {
     let bonjour;
-    try {
-      bonjour = new Bonjour();
-    } catch (err) {
-      return resolve([]);
-    }
+    let browser;
     const found = /* @__PURE__ */ new Map();
-    const browser = bonjour.find({ type: "androidtvremote2" }, (service) => {
-      const ip = (service.addresses || []).find((a) => /^\d+\.\d+\.\d+\.\d+$/.test(a)) || service.host;
-      if (ip) found.set(ip, { name: service.name, host: ip, port: service.port });
-    });
-    setTimeout(() => {
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
       try {
-        browser.stop();
-        bonjour.destroy();
+        if (browser) browser.stop();
+      } catch (err) {
+      }
+      try {
+        if (bonjour) bonjour.destroy();
       } catch (err) {
       }
       resolve(Array.from(found.values()));
-    }, 2500);
+    };
+    try {
+      bonjour = new Bonjour({}, (err) => {
+        console.warn("mDNS unavailable:", err && err.message);
+        finish();
+      });
+      browser = bonjour.find({ type: "androidtvremote2" }, (service) => {
+        const ip = (service.addresses || []).find((a) => /^\d+\.\d+\.\d+\.\d+$/.test(a)) || service.host;
+        if (ip) found.set(ip, { name: service.name, host: ip, port: service.port });
+      });
+    } catch (err) {
+      console.warn("mDNS unavailable:", err.message);
+      return finish();
+    }
+    setTimeout(finish, 2500);
   });
 }
 app.get("/api/discover", wrap(async (req, res) => {
@@ -79888,14 +79900,23 @@ app.post("/api/forget", wrap(async (req, res) => {
 }));
 function localAddresses() {
   const out = [];
-  for (const list of Object.values(os.networkInterfaces())) {
+  let interfaces = {};
+  try {
+    interfaces = os.networkInterfaces();
+  } catch (err) {
+    return out;
+  }
+  for (const list of Object.values(interfaces)) {
     for (const iface of list || []) {
       if (iface.family === "IPv4" && !iface.internal) out.push(iface.address);
     }
   }
   return out;
 }
-app.listen(PORT, () => {
+process.on("uncaughtException", (err) => {
+  console.error("Unexpected error (server keeps running):", err && err.message ? err.message : err);
+});
+var server = app.listen(PORT, () => {
   console.log("Impex TV web remote is running.");
   console.log("Open one of these on your iPhone (same Wi-Fi as the TV):");
   for (const ip of localAddresses()) console.log(`  http://${ip}:${PORT}`);
@@ -79903,6 +79924,14 @@ app.listen(PORT, () => {
   if (tv.config.host && tv.config.cert) {
     tv.connect(tv.config.host).catch((err) => console.error("Auto-connect failed:", err.message));
   }
+});
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`Port ${PORT} is already in use. Is the remote already running? Stop it, or start with PORT=8124.`);
+  } else {
+    console.error("Could not start the server:", err.message);
+  }
+  process.exit(1);
 });
 /*! Bundled license information:
 

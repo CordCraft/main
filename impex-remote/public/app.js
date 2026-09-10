@@ -210,7 +210,9 @@
       const subnet = /^\d+\.\d+\.\d+\.?$/.test(typed) ? typed : '';
       const { devices } = await api('discover' + (subnet ? '?subnet=' + encodeURIComponent(subnet) : ''));
       if (!devices.length) {
-        deviceList.innerHTML = '<li>No TVs found. Make sure the TV is on. You can also type the first three parts of your iPhone\'s Wi-Fi address (for example 192.168.1) and tap Scan again.</li>';
+        deviceList.innerHTML = subnet
+          ? '<li>No TV found in that range. Check the TV is on, and that the range matches your iPhone\'s Wi-Fi address.</li>'
+          : '<li>No TVs found. Type the first three parts of your iPhone\'s Wi-Fi address (Settings, Wi-Fi, the (i) icon), for example 192.168.1, then tap Scan again.</li>';
       }
       devices.forEach((d) => {
         const li = document.createElement('li');
